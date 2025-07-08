@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Daily{% endblock %}
+
+{% block content %}
+  <div class="container py-5" style="background: url('/static/images/TTRPGwithcomputers.jpg') center center / cover no-repeat; position: relative;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(34,34,34,0.7); z-index: 1;"></div>
+    <div style="position: relative; z-index: 2;">
+      <h2 class="text-center mb-4">Daily Page</h2>
+      <div class="row">
+        <div class="col-12 col-md-5 mb-3 mb-md-0" style="background: rgba(52,58,64,0.5); border: 2px solid #ffc107; min-height: 300px;">
+          <div class="p-3 text-white">
+            <div class="d-flex align-items-center mb-3">
+              <label class="form-label mb-0 me-3 fs-5">Events</label>
+              <input type="date" class="form-control form-control-sm w-auto" />
+            </div>
+            <!-- Event List -->
+            <div class="event-list">
+              {% set events = [
+                {'name': 'Team Meeting', 'date': '2024-06-10', 'time': '10:00', 'description': 'Discuss project updates', 'importance': 'High'},
+                {'name': 'Code Review', 'date': '', 'time': '', 'description': 'Review pull requests', 'importance': ''},
+                {'name': 'Lunch with Sarah', 'date': '2024-06-10', 'time': '12:30', 'description': 'Discuss new ideas', 'importance': 'Medium'},
+                {'name': 'Write Report', 'date': '', 'time': '', 'description': 'Summarize weekly progress', 'importance': ''}
+              ] %}
+              {% for event in events %}
+                <div class="mb-3 p-2 rounded bg-dark border border-secondary">
+                  <div class="fw-bold">{{ event.name }}</div>
+                  <div class="small text-muted">
+                    {% if event.date %}Date: {{ event.date }}{% endif %}
+                    {% if event.time %} | Time: {{ event.time }}{% endif %}
+                    {% if event.importance %} | Importance: {{ event.importance }}{% endif %}
+                  </div>
+                  <div>{{ event.description }}</div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-5 mb-3 mb-md-0" style="background: rgba(73,80,87,0.5); border: 2px solid #0dcaf0; min-height: 300px;">
+          <div class="p-3 text-white">
+            <div class="mb-3 fw-bold fs-5">Current Project</div>
+            <div class="mb-3">
+              <label for="projectDropdown" class="form-label">Project</label>
+              <select class="form-select" id="projectDropdown">
+                <option selected disabled>Select a project</option>
+                <option value="1">Project Alpha</option>
+                <option value="2">Project Beta</option>
+                <option value="3">Project Gamma</option>
+              </select>
+            </div>
+            <!-- Tasks for selected project -->
+            {% set tasks_by_project = {
+              '1': [
+                {'name': 'Design UI', 'section': 'Frontend', 'description': 'Create main dashboard', 'notes': 'Use Bootstrap', 'step_number': 1, 'deliverable_folder': 'UI_Mockups'},
+                {'name': 'API Integration', 'section': 'Backend', 'description': 'Connect to REST API', 'notes': '', 'step_number': 2, 'deliverable_folder': ''},
+              ],
+              '2': [
+                {'name': 'Write Docs', 'section': '', 'description': 'Document endpoints', 'notes': '', 'step_number': '', 'deliverable_folder': 'Docs'},
+              ],
+              '3': [
+                {'name': 'Brainstorm', 'section': '', 'description': 'Come up with new features', 'notes': 'Team meeting', 'step_number': '', 'deliverable_folder': ''},
+              ]
+            } %}
+            {% set selected_project = '1' %} {# Placeholder: always show Project Alpha tasks #}
+            <div id="projectTasks">
+              {% for task in tasks_by_project[selected_project] %}
+                <div class="mb-3 p-2 rounded bg-dark border border-info">
+                  <div class="fw-bold">{{ task.name }}</div>
+                  <div>{{ task.description }}</div>
+                  <div class="small text-muted">
+                    {% if task.section %}Section: {{ task.section }}{% endif %}
+                    {% if task.step_number %} | Step: {{ task.step_number }}{% endif %}
+                    {% if task.deliverable_folder %} | Folder: {{ task.deliverable_folder }}{% endif %}
+                  </div>
+                  {% if task.notes %}<div class="fst-italic">Notes: {{ task.notes }}</div>{% endif %}
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-2" style="background: rgba(33,37,41,0.5); border: 2px solid #dc3545; min-height: 300px;">
+          <div class="p-3 text-white">
+            <div class="mb-4 fw-bold">Admin</div>
+            <div class="d-flex flex-column gap-2">
+              <button class="btn btn-primary w-100" onclick="window.location.href='/create-event'">Create Event</button>
+              <button class="btn btn-secondary w-100" onclick="window.location.href='/create-project'">Create Project</button>
+              <button class="btn btn-warning w-100" onclick="window.location.href='/edit-project'">Edit Project</button>
+              <button class="btn btn-success w-100" onclick="window.location.href='/create-project-ai'">Create Project with AI</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %} 

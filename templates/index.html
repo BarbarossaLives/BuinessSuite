@@ -1,20 +1,29 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Barbarossa Business Suite</title>
-        <link rel="stylesheet" href="static/style.css">
-    </head>
-    <body>
-        {% include 'header.html' %}
-        <div class="main-content">
-            <div class="page-container">
-                <div class="suite-container"><h2>Business Suite</h2></div>
-                <div class="launch-area">
-                    The code wizard will appear here. (UI coming soon!)
-                    <br><br>
-                    <img src="{{ request.url_for('static', path='images/codewizard.png') }}" alt="Code Wizard" style="max-width:100%;height:auto;">
-                </div>
-            </div>
-        </div>
-    </body>
-</html> 
+{% extends "base.html" %}
+
+{% block title %}Hello World{% endblock %}
+
+{% block content %}
+  <style>
+    body {
+      position: relative;
+      min-height: 100vh;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url('/static/images/codewizardsitting.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.4; /* Adjust for desired transparency */
+      z-index: -1;
+    }
+  </style>
+  <div class="d-flex align-items-top justify-content-center" style="min-height: 100vh;">
+    <div class="text-center mt-5 text-white fs-1">
+      Business Suite
+    </div>
+    
+  </div>
+{% endblock %} 

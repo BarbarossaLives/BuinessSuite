@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Posting{% endblock %}
+
+{% block content %}
+  <div class="container py-5" style="background: url('/static/images/codewizardsitting.jpg') center center / cover no-repeat; position: relative;">
+    <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(34,34,34,0.7); z-index: 1;"></div>
+    <div style="position: relative; z-index: 2;">
+      <h2 class="text-center mb-4">Posting</h2>
+      <div class="row">
+        <div class="col-12 col-md-5 mb-3 mb-md-0" style="background: rgba(52,58,64,0.4); border: 2px solid #ffc107; min-height: 300px;">
+          <div class="p-3 text-white">
+            <div class="d-flex align-items-center mb-3">
+              <label for="originalPostInput" class="form-label mb-0 me-3">Original Post</label>
+              <input type="text" class="form-control w-75" id="originalPostInput" placeholder="Enter the original post here...">
+            </div>
+            <div class="mb-3">
+              <label for="postTextArea" class="form-label">Post Text</label>
+              <textarea class="form-control" id="postTextArea" rows="5" placeholder="Enter the post text here..."></textarea>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-info mb-2" type="button" id="addPhotoBtn">Add Photo</button>
+              <input type="text" class="form-control" id="imagePathInput" placeholder="Image path will appear here..." readonly>
+            </div>
+            <div class="mb-3">
+              <button class="btn btn-success btn-lg w-100" type="button" id="postBtn">Post</button>
+            </div>
+            <div class="d-flex gap-2">
+              <button class="btn btn-outline-secondary btn-sm w-50" type="button" id="saveConfigBtn">Save Config</button>
+              <button class="btn btn-outline-secondary btn-sm w-50" type="button" id="loadConfigBtn">Load Config</button>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-7" style="background: rgba(73,80,87,0.4); border: 2px solid #0dcaf0; min-height: 300px;">
+          <div class="p-3 text-white">
+            <label class="form-label">Discord Webhooks</label>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="webhook1Check">
+              <label for="webhook1Input" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Webhook #1</label>
+              <input type="text" class="form-control w-100" id="webhook1Input" placeholder="Enter webhook URL...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="webhook2Check">
+              <label for="webhook2Input" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Webhook #2</label>
+              <input type="text" class="form-control w-100" id="webhook2Input" placeholder="Enter webhook URL...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="mastodonUrlCheck">
+              <label for="mastodonUrlInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Mastodon URL</label>
+              <input type="text" class="form-control w-100" id="mastodonUrlInput" placeholder="Enter Mastodon URL...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="mastodonTokenCheck">
+              <label for="mastodonTokenInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Mastodon Token</label>
+              <input type="text" class="form-control w-100" id="mastodonTokenInput" placeholder="Enter Mastodon Token...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="devtoKeyCheck">
+              <label for="devtoKeyInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Dev.to Key</label>
+              <input type="text" class="form-control w-100" id="devtoKeyInput" placeholder="Enter Dev.to Key...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="blueskyHandleCheck">
+              <label for="blueskyHandleInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Bluesky Handle</label>
+              <input type="text" class="form-control w-100" id="blueskyHandleInput" placeholder="Enter Bluesky Handle...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="blueskyPasswordCheck">
+              <label for="blueskyPasswordInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Bluesky Password</label>
+              <input type="password" class="form-control w-100" id="blueskyPasswordInput" placeholder="Enter Bluesky Password...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="linkedinCheck">
+              <label for="linkedinInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">LinkedIn</label>
+              <input type="text" class="form-control w-100" id="linkedinInput" placeholder="Enter LinkedIn...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="truthSocialCheck">
+              <label for="truthSocialInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Truth Social</label>
+              <input type="text" class="form-control w-100" id="truthSocialInput" placeholder="Enter Truth Social...">
+            </div>
+            <div class="d-flex align-items-center mb-3">
+              <input type="checkbox" class="form-check-input me-2" id="twitterCheck">
+              <label for="twitterInput" class="form-label mb-0 flex-shrink-0" style="width: 140px;">Twitter</label>
+              <input type="text" class="form-control w-100" id="twitterInput" placeholder="Enter Twitter...">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script type="module">
+    import { sendMultiSitePost } from '/static/discord_webhook.js';
+    document.getElementById('postBtn').addEventListener('click', () => sendMultiSitePost());
+  </script>
+  <script src="{{ url_for('static', path='posting_config.js') }}"></script>
+{% endblock %} 

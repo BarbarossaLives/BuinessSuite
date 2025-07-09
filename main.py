@@ -91,9 +91,15 @@ async def multi_site_post(request: Request):
 async def save_posting_config(request: Request):
     data = await request.json()
     config_path = os.path.join("static", "posting_config.json")
-    with open(config_path, "w") as f:
-        json.dump(data, f, indent=2)
-    return {"status": "success"}
+    print(f"[SAVE CONFIG] Attempting to write to: {os.path.abspath(config_path)}")
+    try:
+        with open(config_path, "w") as f:
+            json.dump(data, f, indent=2)
+        print("[SAVE CONFIG] Successfully wrote config.")
+        return {"status": "success"}
+    except Exception as e:
+        print(f"[SAVE CONFIG] Error: {e}")
+        return JSONResponse(content={"status": "error", "detail": str(e)}, status_code=500)
 
 @app.get("/load-posting-config")
 async def load_posting_config():

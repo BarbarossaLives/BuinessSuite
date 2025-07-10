@@ -12,28 +12,10 @@
           <div class="p-3 text-white">
             <div class="d-flex align-items-center mb-3">
               <label class="form-label mb-0 me-3 fs-5">Events</label>
-              <input type="date" class="form-control form-control-sm w-auto" />
+              <input type="date" class="form-control form-control-sm w-auto" id="date-picker" />
             </div>
             <!-- Event List -->
-            <div class="event-list">
-              {% set events = [
-                {'name': 'Team Meeting', 'date': '2024-06-10', 'time': '10:00', 'description': 'Discuss project updates', 'importance': 'High'},
-                {'name': 'Code Review', 'date': '', 'time': '', 'description': 'Review pull requests', 'importance': ''},
-                {'name': 'Lunch with Sarah', 'date': '2024-06-10', 'time': '12:30', 'description': 'Discuss new ideas', 'importance': 'Medium'},
-                {'name': 'Write Report', 'date': '', 'time': '', 'description': 'Summarize weekly progress', 'importance': ''}
-              ] %}
-              {% for event in events %}
-                <div class="mb-3 p-2 rounded bg-dark border border-secondary">
-                  <div class="fw-bold">{{ event.name }}</div>
-                  <div class="small text-muted">
-                    {% if event.date %}Date: {{ event.date }}{% endif %}
-                    {% if event.time %} | Time: {{ event.time }}{% endif %}
-                    {% if event.importance %} | Importance: {{ event.importance }}{% endif %}
-                  </div>
-                  <div>{{ event.description }}</div>
-                </div>
-              {% endfor %}
-            </div>
+            <div id="events-list"></div>
           </div>
         </div>
         <div class="col-12 col-md-5 mb-3 mb-md-0" style="background: rgba(73,80,87,0.5); border: 2px solid #0dcaf0; min-height: 300px;">
@@ -42,49 +24,22 @@
             <div class="mb-3">
               <label for="projectDropdown" class="form-label">Project</label>
               <select class="form-select" id="projectDropdown">
-                <option selected disabled>Select a project</option>
-                <option value="1">Project Alpha</option>
-                <option value="2">Project Beta</option>
-                <option value="3">Project Gamma</option>
+                {% for project in projects %}
+                  <option value="{{ project.id }}" {% if project.id == selected_project_id %}selected{% endif %}>{{ project.name }}</option>
+                {% endfor %}
               </select>
             </div>
             <!-- Tasks for selected project -->
-            {% set tasks_by_project = {
-              '1': [
-                {'name': 'Design UI', 'section': 'Frontend', 'description': 'Create main dashboard', 'notes': 'Use Bootstrap', 'step_number': 1, 'deliverable_folder': 'UI_Mockups'},
-                {'name': 'API Integration', 'section': 'Backend', 'description': 'Connect to REST API', 'notes': '', 'step_number': 2, 'deliverable_folder': ''},
-              ],
-              '2': [
-                {'name': 'Write Docs', 'section': '', 'description': 'Document endpoints', 'notes': '', 'step_number': '', 'deliverable_folder': 'Docs'},
-              ],
-              '3': [
-                {'name': 'Brainstorm', 'section': '', 'description': 'Come up with new features', 'notes': 'Team meeting', 'step_number': '', 'deliverable_folder': ''},
-              ]
-            } %}
-            {% set selected_project = '1' %} {# Placeholder: always show Project Alpha tasks #}
-            <div id="projectTasks">
-              {% for task in tasks_by_project[selected_project] %}
-                <div class="mb-3 p-2 rounded bg-dark border border-info">
-                  <div class="fw-bold">{{ task.name }}</div>
-                  <div>{{ task.description }}</div>
-                  <div class="small text-muted">
-                    {% if task.section %}Section: {{ task.section }}{% endif %}
-                    {% if task.step_number %} | Step: {{ task.step_number }}{% endif %}
-                    {% if task.deliverable_folder %} | Folder: {{ task.deliverable_folder }}{% endif %}
-                  </div>
-                  {% if task.notes %}<div class="fst-italic">Notes: {{ task.notes }}</div>{% endif %}
-                </div>
-              {% endfor %}
-            </div>
+            <div id="projectTasks"></div>
           </div>
         </div>
         <div class="col-12 col-md-2" style="background: rgba(33,37,41,0.5); border: 2px solid #dc3545; min-height: 300px;">
           <div class="p-3 text-white">
             <div class="mb-4 fw-bold">Admin</div>
             <div class="d-flex flex-column gap-2">
-              <button class="btn btn-primary w-100" onclick="window.location.href='/create-event'">Create Event</button>
+              <a class="btn btn-primary w-100" id="create-event-btn" href="/create-event">Create Event</a>
               <button class="btn btn-secondary w-100" onclick="window.location.href='/create-project'">Create Project</button>
-              <button class="btn btn-warning w-100" onclick="window.location.href='/edit-project'">Edit Project</button>
+              <a class="btn btn-warning w-100" id="edit-project-btn" href="/edit-project/{{ selected_project_id }}">Edit Project</a>
               <button class="btn btn-success w-100" onclick="window.location.href='/create-project-ai'">Create Project with AI</button>
             </div>
           </div>
@@ -92,4 +47,77 @@
       </div>
     </div>
   </div>
+
+  <script>
+  const eventList = document.getElementById('events-list');
+  const datePicker = document.getElementById('date-picker');
+  const projects = {{ projects|tojson }};
+  const selectedProjectId = {{ selected_project_id if selected_project_id else 'null' }};
+  const projectDropdown = document.getElementById('projectDropdown');
+  const projectTasksDiv = document.getElementById('projectTasks');
+
+  async function loadEvents() {
+      const date = datePicker.value;
+      const res = await fetch('/events');
+      const events = await res.json();
+      eventList.innerHTML = '';
+      events
+        .filter(ev => ev.start_time.slice(0,10) === date)
+        .forEach(ev => {
+          const a = document.createElement('a');
+          a.className = 'event-item mb-2 p-2 border rounded d-block' + (ev.completed ? ' bg-success-subtle text-decoration-line-through' : '');
+          a.style.cursor = 'pointer';
+          a.textContent = `${ev.name} (${ev.start_time.replace('T',' ').slice(0,16)})`;
+          a.href = `/edit-event/${ev.id}`;
+          eventList.appendChild(a);
+        });
+  }
+
+  function renderTasks(projectId) {
+    const project = projects.find(p => p.id == projectId);
+    projectTasksDiv.innerHTML = '';
+    if (!project || !project.tasks.length) {
+      projectTasksDiv.innerHTML = '<div class="text-muted">No tasks for this project.</div>';
+      return;
+    }
+    project.tasks.forEach(task => {
+      const div = document.createElement('div');
+      div.className = 'mb-3 p-2 rounded bg-dark border border-info';
+      div.innerHTML = `<div class='fw-bold'>${task.completed ? `<span class='toggle-complete' data-task-id='${task.id}' style='cursor:pointer;'>✔️</span> ` : `<span class='toggle-complete' data-task-id='${task.id}' style='cursor:pointer; color: #888;'>⬜</span> `}${task.name}</div>
+        <div>${task.description || ''}</div>
+        <div class='small text-muted'>${task.due_date ? 'Due: ' + task.due_date : ''}${task.completed ? ' | Completed' : ''}</div>`;
+      projectTasksDiv.appendChild(div);
+    });
+    // Add event listeners for toggling completion
+    projectTasksDiv.querySelectorAll('.toggle-complete').forEach(el => {
+      el.onclick = async function(e) {
+        e.stopPropagation();
+        const taskId = this.getAttribute('data-task-id');
+        await fetch(`/tasks/${taskId}/toggle-completed`, {method: 'PATCH'});
+        renderTasks(projectDropdown.value);
+      };
+    });
+  }
+
+  projectDropdown.onchange = function() {
+    renderTasks(this.value);
+    document.getElementById('edit-project-btn').href = `/edit-project/${this.value}`;
+  };
+
+  datePicker.onchange = loadEvents;
+  window.onload = function() {
+    // Set date picker to today by default
+    const today = new Date().toISOString().slice(0,10);
+    datePicker.value = today;
+    loadEvents();
+    if (selectedProjectId) {
+      renderTasks(selectedProjectId);
+      document.getElementById('edit-project-btn').href = `/edit-project/${selectedProjectId}`;
+    } else if (projects.length) {
+      renderTasks(projects[0].id);
+      document.getElementById('edit-project-btn').href = `/edit-project/${projects[0].id}`;
+    }
+  };
+  </script>
+
 {% endblock %} 

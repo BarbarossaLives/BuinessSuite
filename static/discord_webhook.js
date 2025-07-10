@@ -15,6 +15,10 @@ export function sendMultiSitePost() {
   const blueskyHandle = document.getElementById('blueskyHandleInput').value;
   const blueskyPassword = document.getElementById('blueskyPasswordInput').value;
 
+  // Dev.to
+  const devtoChecked = document.getElementById('devtoKeyCheck').checked;
+  const devtoApiKey = document.getElementById('devtoKeyInput').value;
+
   // Message fields
   const originalPost = document.getElementById('originalPostInput').value;
   const postText = document.getElementById('postTextArea').value;
@@ -31,6 +35,10 @@ export function sendMultiSitePost() {
       enabled: mastodonChecked,
       url: mastodonUrl,
       token: mastodonToken
+    },
+    devto: {
+      enabled: devtoChecked,
+      api_key: devtoApiKey
     },
     bluesky: {
       enabled: blueskyChecked,
